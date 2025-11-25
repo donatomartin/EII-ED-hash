@@ -5,7 +5,7 @@ public enum Status {
 	VALID,
 	DELETED;
 	
-	public String getInitialStatus() {
+	public String getStatusInitial() {
 		switch (this) {
 			case EMPTY:
 				return "E";
