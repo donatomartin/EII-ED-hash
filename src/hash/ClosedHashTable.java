@@ -1,7 +1,5 @@
 package hash;
 
-import org.junit.jupiter.api.DisplayNameGenerator.IndicativeSentences;
-
 public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTable<T> {
 	
 	HashNode<T>[] associativeArray;
@@ -70,8 +68,7 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 		return 1 + Math.abs(hashCode) % (capacityB - 1);
 	}
 	
-	protected HashNode<T> findMatchingNodeT element) {
-		
+	protected HashNode<T> findMatchingNodeT(T element) {
 		for (int attempts = 0; attempts < capacityB; attempts++) {
 			int index = hashFunction(element, attempts);
 			HashNode<T> node = associativeArray[index];
@@ -81,7 +78,6 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 			if (node.getElement().equals(element))
 				return node;
 		}
-
 		return null;
 	}
 	
