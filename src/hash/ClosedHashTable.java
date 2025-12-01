@@ -4,8 +4,11 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 	
 	HashNode<T>[] associativeArray;
 	private HashStrategy hashStrategy;
+	
+	private double maxLoadFactor;
+	private double minLoadFactor;
 
-	public ClosedHashTable(int capacity, HashStrategy hashStrategy) {
+	public ClosedHashTable(int capacity, HashStrategy hashStrategy, double maxLoadFactor, double minLoadFactor) {
 			
 		if (hashStrategy == null)
 			throw new NullPointerException();
@@ -23,6 +26,16 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 		this.hashStrategy = hashStrategy;
 	}
 
+	public ClosedHashTable(int capacity, HashStrategy hashStrategy, double maxLoadFactor) {
+		this(capacity, hashStrategy, maxLoadFactor, -2);
+	}
+
+	public ClosedHashTable(int capacity, HashStrategy hashStrategy) {
+		this(capacity, hashStrategy, 2, -2);
+	}
+
+
+
 	@Override
 	public boolean add(T element) {
 		if (element == null)
@@ -35,6 +48,7 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 			return false;
 
 		addElementToNode(availableNode, element);
+		dynamicResize();
 		return true;
 	}
 
@@ -186,6 +200,38 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 		}
 		
 		return sb.toString();
+	}
+	
+	protected void updateCapacity(int newCapacity) {
+		if (newCapacity < elementNumber)
+			throw new IllegalArgumentException();
+		HashNode<T>[] old = associativeArray;
+		this.initializeEmptyAssociativeArray(newCapacity);
+		
+		for (HashNode<T> nodo: old) {
+			if (nodo.getStatus().equals(Status.VALID))
+				add(nodo.getElement());
+		}
+	}
+	
+	protected void initializeEmptyAssociativeArray(int capacity) {
+		//TODO
+		
+	}
+	
+	protected void dynamicResize() {
+		//TODO
+		
+	}
+	
+	protected void inverseDynamicResize() {
+		if (getLoadFactor() < minLoadFactor) {
+			int newCapacity = getPreviousPrimeNumber(capacityB / 2);
+			if (newCapacity < 3) {
+				newCapacity = 3;
+			}
+			updateCapacity(newCapacity);
+		}
 	}
 
 }
