@@ -16,8 +16,7 @@ public abstract class AbstractHashTable<T> implements HashTable<T> {
 
 	@Override
 	public double getLoadFactor() {
-		// TODO
-		return 0.0;
+		return capacityB == 0 ? 0.0 : (double) elementNumber / capacityB;
 	}
 
 	protected abstract int hashFunction(T element, int attempts);
