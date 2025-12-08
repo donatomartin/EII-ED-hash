@@ -24,6 +24,8 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 			associativeArray[i] = new HashNode<T>();
 
 		this.hashStrategy = hashStrategy;
+		this.maxLoadFactor = maxLoadFactor;
+		this.minLoadFactor = minLoadFactor;
 	}
 
 	public ClosedHashTable(int capacity, HashStrategy hashStrategy, double maxLoadFactor) {
@@ -75,6 +77,7 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 			return false;
 
 		removeElementFromNode(node);
+		inverseDynamicResize();
 		return true;
 	}
 
@@ -209,26 +212,49 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 		this.initializeEmptyAssociativeArray(newCapacity);
 		
 		for (HashNode<T> nodo: old) {
-			if (nodo.getStatus().equals(Status.VALID))
-				add(nodo.getElement());
+			if (nodo.getStatus().equals(Status.VALID)) {
+				HashNode<T> target = findAvailableNodeFor(nodo.getElement());
+				addElementToNode(target, nodo.getElement());
+			}
 		}
 	}
 	
 	protected void initializeEmptyAssociativeArray(int capacity) {
-		//TODO
+		if (capacity < 3)
+			throw new IllegalArgumentException();
+
+		int adjustedCapacity = isPrimeNumber(capacity) ? capacity : getNextPrimeNumber(capacity);
+		this.capacityB = adjustedCapacity;
+		this.associativeArray = new HashNode[adjustedCapacity];
+		for (int i = 0; i < adjustedCapacity; i++) {
+			associativeArray[i] = new HashNode<T>();
+		}
+		this.elementNumber = 0;
 		
 	}
 	
 	protected void dynamicResize() {
-		//TODO
+		if (maxLoadFactor <= 0)
+			return;
+		if (getLoadFactor() > maxLoadFactor) {
+			int newCapacity = getNextPrimeNumber(capacityB * 2);
+			updateCapacity(newCapacity);
+		}
 		
 	}
 	
 	protected void inverseDynamicResize() {
+		if (minLoadFactor <= 0)
+			return;
 		if (getLoadFactor() < minLoadFactor) {
-			int newCapacity = getPreviousPrimeNumber(capacityB / 2);
-			if (newCapacity < 3) {
+			int targetCapacity = capacityB / 2;
+			int newCapacity;
+			if (targetCapacity < 3) {
 				newCapacity = 3;
+			} else if (targetCapacity == 3) {
+				newCapacity = 3;
+			} else {
+				newCapacity = getPreviousPrimeNumber(targetCapacity);
 			}
 			updateCapacity(newCapacity);
 		}
