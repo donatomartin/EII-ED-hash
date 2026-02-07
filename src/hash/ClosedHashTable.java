@@ -36,8 +36,6 @@ public class ClosedHashTable<T> extends AbstractHashTable<T> implements HashTabl
 		this(capacity, hashStrategy, 2, -2);
 	}
 
-
-
 	@Override
 	public boolean add(T element) {
 		if (element == null)
